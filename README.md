@@ -6,7 +6,7 @@ includes the number of objects (files) in the bucket.
 
 ## Installation
 
-1. Download the latest version from the [Releases](/releases) page.
+1. Download the latest version from the [Releases](https://github.com/justplainsimple/bucketgrowth/releases) page.
 1. Unzip into any directory on your `PATH`.
 1. Run `bucketgrowth` for help.
 
