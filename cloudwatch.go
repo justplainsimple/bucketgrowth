@@ -62,10 +62,10 @@ func (self Request) Measure() (Metrics, error) {
 	metrics.TotalObjectCount = objectMetrics[len(objectMetrics)-1].Total
 
 	// calculate growth
-	metrics.SizeGrowthMonthly = monthlyGrowth(sizeMetrics)
-	metrics.ObjectGrowthMonthly = monthlyGrowth(objectMetrics)
-	metrics.SizeGrowthYearly = yearlyGrowth(sizeMetrics)
-	metrics.ObjectGrowthYearly = yearlyGrowth(objectMetrics)
+	metrics.SizeGrowthMonthly = monthlyGrowthPct(sizeMetrics)
+	metrics.ObjectGrowthMonthly = monthlyGrowthPct(objectMetrics)
+	metrics.SizeGrowthYearly = yearlyGrowthPct(sizeMetrics)
+	metrics.ObjectGrowthYearly = yearlyGrowthPct(objectMetrics)
 
 	return metrics, nil
 }
