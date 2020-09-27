@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-// (1000 - 100)/100 = 9 = 900% monthly growth
-
 func TestMonthlyGrowth(t *testing.T) {
 	now := time.Now()
 	metrics := []DailyMetric{

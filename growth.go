@@ -28,13 +28,6 @@ func monthlyGrowth(metrics []DailyMetric) float64 {
 // Returns the decimal value that equates to unit/year
 // Assumes array in already sorted by time (oldest->newest)
 func yearlyGrowth(metrics []DailyMetric) float64 {
-	/* Straight-line percentage change
-	presentValue := metrics[len(metrics)-1].Total
-	originalValue := metrics[0].Total
-
-	growthRate := (presentValue - originalValue) / originalValue
-	return float64(growthRate * 100)
-	*/
 	// Growth Rate = (Present / Past) * 1/N - 1
 	presentValue := metrics[len(metrics)-1].Total
 	originalValue := metrics[0].Total
