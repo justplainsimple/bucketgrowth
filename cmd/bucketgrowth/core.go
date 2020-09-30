@@ -1,18 +1,18 @@
 package main
 
 import (
-  "encoding/json"
-  "fmt"
-  "log"
-  "os"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 
-  "github.com/aws/aws-sdk-go/aws"
-  "github.com/aws/aws-sdk-go/aws/session"
-  "github.com/aws/aws-sdk-go/service/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/dustin/go-humanize"
-  "github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2"
 
-  "bucketgrowth"
+	"bucketgrowth"
 )
 
 func perform(c *cli.Context) error {
@@ -83,4 +83,3 @@ func displayMetrics(metrics bucketgrowth.Metrics) error {
 
 	return nil
 }
-

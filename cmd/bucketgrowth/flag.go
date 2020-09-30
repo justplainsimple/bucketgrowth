@@ -1,9 +1,9 @@
 package main
 
 import (
-  "errors"
+	"errors"
 
-  "github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2"
 )
 
 const outputText string = "text"
@@ -43,4 +43,3 @@ func guardBucketArg(c *cli.Context, bucket string) error {
 
 	return errors.New("") // blank error to show there's an issue
 }
-
