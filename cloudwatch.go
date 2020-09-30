@@ -14,14 +14,14 @@ import (
 var now = time.Now()
 
 type Metrics struct {
-	TotalSizeBytes   int64
-	TotalObjectCount int64
+	TotalSizeBytes   int64 `json:"total_size_bytes"`
+	TotalObjectCount int64 `json:"total_object_count"`
 
-	SizeGrowthMonthly float64
-	SizeGrowthYearly  float64
+	SizeGrowthMonthly float64 `json:"size_growth_monthly"`
+	SizeGrowthYearly  float64 `json:"size_growth_yearly"`
 
-	ObjectGrowthMonthly float64
-	ObjectGrowthYearly  float64
+	ObjectGrowthMonthly float64 `json:"object_growth_monthly"`
+	ObjectGrowthYearly  float64 `json:"object_growth_yearly"`
 }
 
 type DailyMetric struct {

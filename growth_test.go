@@ -1,29 +1,29 @@
 package bucketgrowth
 
 import (
-  "log"
-  "io/ioutil"
-  "math"
+	"io/ioutil"
+	"log"
+	"math"
 	"testing"
 	"time"
 )
 
 func init() {
-  log.SetOutput(ioutil.Discard)
+	log.SetOutput(ioutil.Discard)
 }
 
 func TestAverage(t *testing.T) {
-  cases := []struct{
-    name string
-    metrics []float64
-    expected float64
-  }{
-    {
-      "valid result",
-      []float64{ float64(1), float64(2), },
-      float64(1.5),
-    },
-  }
+	cases := []struct {
+		name     string
+		metrics  []float64
+		expected float64
+	}{
+		{
+			"valid result",
+			[]float64{float64(1), float64(2)},
+			float64(1.5),
+		},
+	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -55,9 +55,9 @@ func TestMonthlyGrowthPct(t *testing.T) {
 
 	expected := float64(16.67)
 	actual := monthlyGrowthPct(metrics)
-  // due to floating-point precision, we need to round in order to pass
-  // this test.
-  actual = math.Round(actual*100)/100
+	// due to floating-point precision, we need to round in order to pass
+	// this test.
+	actual = math.Round(actual*100) / 100
 
 	if expected != actual {
 		t.Fatalf("Expected %v but got %v", expected, actual)
@@ -83,9 +83,9 @@ func TestYearlyGrowthPct(t *testing.T) {
 
 	expected := float64(196.04)
 	actual := yearlyGrowthPct(metrics)
-  // due to floating-point precision, we need to round in order to pass
-  // this test.
-  actual = math.Round(actual*100)/100
+	// due to floating-point precision, we need to round in order to pass
+	// this test.
+	actual = math.Round(actual*100) / 100
 
 	if expected != actual {
 		t.Fatalf("Expected %v but got %v", expected, actual)
@@ -93,28 +93,28 @@ func TestYearlyGrowthPct(t *testing.T) {
 }
 
 func TestMidpointGrowthRate(t *testing.T) {
-  cases := []struct{
-    name string
-    start DailyMetric
-    end DailyMetric
-    expected float64
-  }{
-    {
-      "valid result",
-      DailyMetric{
-        Total: 100,
-      },
-      DailyMetric{
-        Total: 1000,
-      },
-      float64(1.63636),
-    },
-  }
+	cases := []struct {
+		name     string
+		start    DailyMetric
+		end      DailyMetric
+		expected float64
+	}{
+		{
+			"valid result",
+			DailyMetric{
+				Total: 100,
+			},
+			DailyMetric{
+				Total: 1000,
+			},
+			float64(1.63636),
+		},
+	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			actual := midpointGrowthRate(c.start,c.end)
-      actual = math.Round(actual*100000)/100000
+			actual := midpointGrowthRate(c.start, c.end)
+			actual = math.Round(actual*100000) / 100000
 
 			if c.expected != actual {
 				t.Fatalf("Expected %v but got %v", c.expected, actual)
@@ -124,60 +124,60 @@ func TestMidpointGrowthRate(t *testing.T) {
 }
 
 func TestFindMetricByDate(t *testing.T) {
-  now := time.Now()
+	now := time.Now()
 
-  cases := []struct{
-    name string
-    metrics []DailyMetric
-    date time.Time
-    expected DailyMetric
-    expectedErr error
-  }{
-    {
-      "valid result",
-      []DailyMetric{
-        DailyMetric{
-          Date: now.AddDate(0,-8,0),
-        },
-        DailyMetric{
-          Date: now.AddDate(0,-6,0),
-        },
-        DailyMetric{
-          Date: now,
-        },
-      },
-      now.AddDate(0,-6,0),
-      DailyMetric{
-        Date: now.AddDate(0,-6,0),
-      },
-      nil,
-    },
-    {
-      "date not found",
-      []DailyMetric{
-        DailyMetric{
-          Date: now.AddDate(0,-8,0),
-        },
-        DailyMetric{
-          Date: now.AddDate(0,-6,0),
-        },
-        DailyMetric{
-          Date: now,
-        },
-      },
-      now.AddDate(0,-7,0),
-      DailyMetric{},
-      ErrDailyMetricNotFound,
-    },
-  }
+	cases := []struct {
+		name        string
+		metrics     []DailyMetric
+		date        time.Time
+		expected    DailyMetric
+		expectedErr error
+	}{
+		{
+			"valid result",
+			[]DailyMetric{
+				DailyMetric{
+					Date: now.AddDate(0, -8, 0),
+				},
+				DailyMetric{
+					Date: now.AddDate(0, -6, 0),
+				},
+				DailyMetric{
+					Date: now,
+				},
+			},
+			now.AddDate(0, -6, 0),
+			DailyMetric{
+				Date: now.AddDate(0, -6, 0),
+			},
+			nil,
+		},
+		{
+			"date not found",
+			[]DailyMetric{
+				DailyMetric{
+					Date: now.AddDate(0, -8, 0),
+				},
+				DailyMetric{
+					Date: now.AddDate(0, -6, 0),
+				},
+				DailyMetric{
+					Date: now,
+				},
+			},
+			now.AddDate(0, -7, 0),
+			DailyMetric{},
+			ErrDailyMetricNotFound,
+		},
+	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			actual, err := findMetricByDate(c.metrics,c.date)
+			actual, err := findMetricByDate(c.metrics, c.date)
 
-      if c.expectedErr != err {
+			if c.expectedErr != err {
 				t.Fatalf("Expected %v but got %v", c.expectedErr, err)
-      }
+			}
 
 			if c.expected != actual {
 				t.Fatalf("Expected %v but got %v", c.expected, actual)
