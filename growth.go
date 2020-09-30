@@ -3,6 +3,7 @@ package bucketgrowth
 import (
 	"fmt"
 	"log"
+	"sort"
 	"time"
 )
 
@@ -48,19 +49,13 @@ func average(metrics []float64) float64 {
 }
 
 func findMetricByDate(metrics []DailyMetric, date time.Time) (DailyMetric, error) {
-	var metric DailyMetric
-	for i, val := range metrics {
-		if val.Date == date {
-			metric = metrics[i]
-			break
-		}
-	}
+	i := sort.Search(len(metrics), func(i int) bool { return metrics[i].Date == date })
 
-	if metric == (DailyMetric{}) {
+	if i == len(metrics) {
 		return DailyMetric{}, ErrDailyMetricNotFound
 	}
 
-	return metric, nil
+	return metrics[i], nil
 }
 
 // Returns the decimal value that equates to unit/year
