@@ -40,6 +40,11 @@ func main() {
 				Value:       outputText,
 				Destination: &flagOutputType,
 			},
+			&cli.BoolFlag{
+				Name:        "skip-banner",
+				Usage:       "Suppresses output of the banner",
+				Destination: &flagSkipBanner,
+			},
 		},
 	}
 
