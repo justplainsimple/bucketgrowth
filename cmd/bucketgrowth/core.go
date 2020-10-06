@@ -71,8 +71,10 @@ func displayMetrics(metrics bucketgrowth.Metrics) error {
 	}
 
 	if flagOutputType == outputText {
-		fmt.Println("Bucket Growth")
-		fmt.Println("=============")
+		if !flagSkipBanner {
+			fmt.Println("Bucket Growth")
+			fmt.Println("=============")
+		}
 
 		fmt.Printf("Total Size: %s\n", humanize.Bytes(uint64(metrics.TotalSizeBytes)))
 		fmt.Printf("Total Objects: %s\n", humanize.Comma(metrics.TotalObjectCount))

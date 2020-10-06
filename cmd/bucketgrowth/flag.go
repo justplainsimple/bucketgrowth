@@ -18,6 +18,8 @@ var flagVerbose bool
 
 var flagOutputType string
 
+var flagSkipBanner bool
+
 var ErrUnsupportedOutputType error = errors.New("Unsupported output type")
 
 var validOutputTypes []string = []string{outputText, outputJson}
