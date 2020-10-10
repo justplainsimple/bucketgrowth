@@ -76,11 +76,15 @@ func displayMetrics(metrics bucketgrowth.Metrics) error {
 			fmt.Println("=============")
 		}
 
-		fmt.Printf("Total Size: %s\n", humanize.Bytes(uint64(metrics.TotalSizeBytes)))
+		fmt.Printf("\nTotal Size: %s\n", humanize.Bytes(uint64(metrics.TotalSizeBytes)))
 		fmt.Printf("Total Objects: %s\n", humanize.Comma(metrics.TotalObjectCount))
-		fmt.Println("")
-		fmt.Printf("Size Growth: %s%%/mo, %s%%/yr\n", humanize.CommafWithDigits(metrics.SizeGrowthMonthly, 2), humanize.CommafWithDigits(metrics.SizeGrowthYearly, 2))
+
+		fmt.Printf("\nSize Growth: %s%%/mo, %s%%/yr\n", humanize.CommafWithDigits(metrics.SizeGrowthMonthly, 2), humanize.CommafWithDigits(metrics.SizeGrowthYearly, 2))
 		fmt.Printf("Object Growth: %s%%/mo, %s%%/yr\n", humanize.CommafWithDigits(metrics.ObjectGrowthMonthly, 2), humanize.CommafWithDigits(metrics.ObjectGrowthYearly, 2))
+
+    fmt.Printf("\nSize Projection: %s (1 yr), %s (5 yr)\n", humanize.Bytes(uint64(metrics.Projections.Size1Year)), humanize.Bytes(uint64(metrics.Projections.Size5Year)))
+
+    fmt.Printf("Object Count Projection: %s (1 yr), %s (5 yr)\n", humanize.Comma(metrics.Projections.Object1Year), humanize.Comma(metrics.Projections.Object5Year))
 	}
 
 	return nil
