@@ -22,6 +22,16 @@ type Metrics struct {
 
 	ObjectGrowthMonthly float64 `json:"object_growth_monthly"`
 	ObjectGrowthYearly  float64 `json:"object_growth_yearly"`
+
+  Projections ProjectionMetrics `json:"projections"`
+}
+
+type ProjectionMetrics struct {
+  Size1Year int64 `json:"size_bytes_1_year"`
+  Size5Year int64 `json:"size_bytes_5_year"`
+
+  Object1Year int64 `json:"object_count_1_year"`
+  Object5Year int64 `json:"object_count_5_year"`
 }
 
 type DailyMetric struct {
@@ -66,6 +76,18 @@ func (self Request) Measure() (Metrics, error) {
 	metrics.ObjectGrowthMonthly = monthlyGrowthPct(objectMetrics)
 	metrics.SizeGrowthYearly = yearlyGrowthPct(sizeMetrics)
 	metrics.ObjectGrowthYearly = yearlyGrowthPct(objectMetrics)
+
+  // calculation projection
+  // using monthly growth rate because it is more accurate than yearly
+  proj := ProjectionMetrics{}
+
+  proj.Size1Year = projection(metrics.TotalSizeBytes, 1, metrics.SizeGrowthMonthly / 100.0)
+  proj.Object1Year = projection(metrics.TotalObjectCount, 1, metrics.ObjectGrowthMonthly / 100.0)
+
+  proj.Size5Year = projection(metrics.TotalSizeBytes, 5, metrics.SizeGrowthMonthly / 100.0)
+  proj.Object5Year = projection(metrics.TotalObjectCount, 5, metrics.ObjectGrowthMonthly / 100.0)
+
+  metrics.Projections = proj
 
 	return metrics, nil
 }
