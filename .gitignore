@@ -1,2 +1,3 @@
 # Ignore derived directories
 .build
+coverage.html
