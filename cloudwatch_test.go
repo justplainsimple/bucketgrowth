@@ -23,12 +23,12 @@ func TestEndofResults(t *testing.T) {
 		{
 			"no more results",
 			"",
-			false,
+			true,
 		},
 		{
 			"more results",
 			"somerandomvalue",
-			true,
+			false,
 		},
 	}
 
