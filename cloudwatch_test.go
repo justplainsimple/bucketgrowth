@@ -3,12 +3,11 @@ package bucketgrowth
 import (
 	"testing"
 
-	_ "github.com/aws/aws-sdk-go/service/cloudwatch"
-	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 )
 
 type Mock struct {
-	cloudwatchiface.CloudWatchAPI
+	*cloudwatch.Client
 }
 
 func TestMeasure(t *testing.T) {

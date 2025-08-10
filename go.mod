@@ -3,7 +3,8 @@ module bucketgrowth
 go 1.13
 
 require (
-	github.com/aws/aws-sdk-go v1.55.8
+	github.com/aws/aws-sdk-go-v2/config v1.27.27
+	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.40.3
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1
 	github.com/kr/pretty v0.1.0 // indirect

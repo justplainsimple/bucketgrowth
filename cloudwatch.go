@@ -1,14 +1,14 @@
 package bucketgrowth
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"sort"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudwatch"
-	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 )
 
 var now = time.Now()
@@ -23,15 +23,15 @@ type Metrics struct {
 	ObjectGrowthMonthly float64 `json:"object_growth_monthly"`
 	ObjectGrowthYearly  float64 `json:"object_growth_yearly"`
 
-  Projections ProjectionMetrics `json:"projections"`
+	Projections ProjectionMetrics `json:"projections"`
 }
 
 type ProjectionMetrics struct {
-  Size1Year int64 `json:"size_bytes_1_year"`
-  Size5Year int64 `json:"size_bytes_5_year"`
+	Size1Year int64 `json:"size_bytes_1_year"`
+	Size5Year int64 `json:"size_bytes_5_year"`
 
-  Object1Year int64 `json:"object_count_1_year"`
-  Object5Year int64 `json:"object_count_5_year"`
+	Object1Year int64 `json:"object_count_1_year"`
+	Object5Year int64 `json:"object_count_5_year"`
 }
 
 type DailyMetric struct {
@@ -42,7 +42,7 @@ type DailyMetric struct {
 type Request struct {
 	BucketName string
 
-	CloudWatchClient cloudwatchiface.CloudWatchAPI
+	CloudWatchClient *cloudwatch.Client
 }
 
 func (self Request) Measure() (Metrics, error) {
@@ -77,17 +77,17 @@ func (self Request) Measure() (Metrics, error) {
 	metrics.SizeGrowthYearly = yearlyGrowthPct(sizeMetrics)
 	metrics.ObjectGrowthYearly = yearlyGrowthPct(objectMetrics)
 
-  // calculation projection
-  // using monthly growth rate because it is more accurate than yearly
-  proj := ProjectionMetrics{}
+	// calculation projection
+	// using monthly growth rate because it is more accurate than yearly
+	proj := ProjectionMetrics{}
 
-  proj.Size1Year = projection(metrics.TotalSizeBytes, 1, metrics.SizeGrowthMonthly / 100.0)
-  proj.Object1Year = projection(metrics.TotalObjectCount, 1, metrics.ObjectGrowthMonthly / 100.0)
+	proj.Size1Year = projection(metrics.TotalSizeBytes, 1, metrics.SizeGrowthMonthly/100.0)
+	proj.Object1Year = projection(metrics.TotalObjectCount, 1, metrics.ObjectGrowthMonthly/100.0)
 
-  proj.Size5Year = projection(metrics.TotalSizeBytes, 5, metrics.SizeGrowthMonthly / 100.0)
-  proj.Object5Year = projection(metrics.TotalObjectCount, 5, metrics.ObjectGrowthMonthly / 100.0)
+	proj.Size5Year = projection(metrics.TotalSizeBytes, 5, metrics.SizeGrowthMonthly/100.0)
+	proj.Object5Year = projection(metrics.TotalObjectCount, 5, metrics.ObjectGrowthMonthly/100.0)
 
-  metrics.Projections = proj
+	metrics.Projections = proj
 
 	return metrics, nil
 }
@@ -100,27 +100,27 @@ func (self Request) sizeData(start time.Time) ([]DailyMetric, error) {
 	input := cloudwatch.GetMetricStatisticsInput{
 		StartTime: &start,
 		EndTime:   &now,
-		Dimensions: []*cloudwatch.Dimension{
-			&cloudwatch.Dimension{
-				Name:  aws.String("BucketName"),
-				Value: aws.String(self.BucketName),
+		Dimensions: []types.Dimension{
+			{
+				Name:  strPtr("BucketName"),
+				Value: strPtr(self.BucketName),
 			},
-			&cloudwatch.Dimension{
-				Name:  aws.String("StorageType"),
-				Value: aws.String("StandardStorage"),
+			{
+				Name:  strPtr("StorageType"),
+				Value: strPtr("StandardStorage"),
 			},
 		},
-		MetricName: aws.String("BucketSizeBytes"),
-		Namespace:  aws.String("AWS/S3"),
-		Period:     aws.Int64(86400),
-		Statistics: []*string{
-			aws.String("Maximum"),
+		MetricName: strPtr("BucketSizeBytes"),
+		Namespace:  strPtr("AWS/S3"),
+		Period:     int32Ptr(86400),
+		Statistics: []types.Statistic{
+			types.StatisticMaximum,
 		},
-		Unit: aws.String("Bytes"),
+		Unit: types.StandardUnitBytes,
 	}
 
 	log.Printf("Retrieving total size from: %s\n", self.BucketName)
-	resp, err := self.CloudWatchClient.GetMetricStatistics(&input)
+	resp, err := self.CloudWatchClient.GetMetricStatistics(context.Background(), &input)
 	if err != nil {
 		return []DailyMetric{}, err
 	}
@@ -134,27 +134,27 @@ func (self Request) objectData(start time.Time) ([]DailyMetric, error) {
 	input := cloudwatch.GetMetricStatisticsInput{
 		StartTime: &start,
 		EndTime:   &now,
-		Dimensions: []*cloudwatch.Dimension{
-			&cloudwatch.Dimension{
-				Name:  aws.String("BucketName"),
-				Value: aws.String(self.BucketName),
+		Dimensions: []types.Dimension{
+			{
+				Name:  strPtr("BucketName"),
+				Value: strPtr(self.BucketName),
 			},
-			&cloudwatch.Dimension{
-				Name:  aws.String("StorageType"),
-				Value: aws.String("AllStorageTypes"),
+			{
+				Name:  strPtr("StorageType"),
+				Value: strPtr("AllStorageTypes"),
 			},
 		},
-		MetricName: aws.String("NumberOfObjects"),
-		Namespace:  aws.String("AWS/S3"),
-		Period:     aws.Int64(86400),
-		Statistics: []*string{
-			aws.String("Maximum"),
+		MetricName: strPtr("NumberOfObjects"),
+		Namespace:  strPtr("AWS/S3"),
+		Period:     int32Ptr(86400),
+		Statistics: []types.Statistic{
+			types.StatisticMaximum,
 		},
-		Unit: aws.String("Count"),
+		Unit: types.StandardUnitCount,
 	}
 
 	log.Printf("Retrieving total object count from: %s\n", self.BucketName)
-	resp, err := self.CloudWatchClient.GetMetricStatistics(&input)
+	resp, err := self.CloudWatchClient.GetMetricStatistics(context.Background(), &input)
 	if err != nil {
 		return []DailyMetric{}, err
 	}
@@ -164,7 +164,7 @@ func (self Request) objectData(start time.Time) ([]DailyMetric, error) {
 	return results, nil
 }
 
-func marshalDailyMetric(results []*cloudwatch.Datapoint) []DailyMetric {
+func marshalDailyMetric(results []types.Datapoint) []DailyMetric {
 	metrics := make([]DailyMetric, len(results))
 
 	for i, val := range results {
@@ -177,4 +177,12 @@ func marshalDailyMetric(results []*cloudwatch.Datapoint) []DailyMetric {
 	}
 
 	return metrics
+}
+
+func strPtr(s string) *string {
+	return &s
+}
+
+func int32Ptr(i int32) *int32 {
+	return &i
 }
