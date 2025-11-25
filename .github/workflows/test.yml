@@ -16,7 +16,7 @@ jobs:
         run: make test
       - name: Generate test coverage report
         run: make coverage
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: coverage.html
           path: coverage.html
