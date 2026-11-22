@@ -23,7 +23,7 @@ This tool helps with capacity planning, cost forecasting, and understanding stor
 ### Building from Source
 
 Requirements:
-- Go 1.13 or higher
+- Go 1.27.4 or higher
 - AWS SDK for Go
 
 ```bash
