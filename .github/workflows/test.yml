@@ -8,15 +8,17 @@ jobs:
     env:
       GO111MODULE: on
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v6
       - name: Checkout Source
         uses: actions/checkout@v4
+      - name: Install Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
       - name: Run tests
         run: make test
       - name: Generate test coverage report
         run: make coverage
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: coverage.html
           path: coverage.html
